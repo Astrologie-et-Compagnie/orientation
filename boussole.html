@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>La Boussole Astrologique — Astrologie & Compagnie</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --cream: #F5F2EC;
+      --card:  #FDFAF5;
+      --forest: #2D4A3E;
+      --gold: #C4A35A;
+      --gold-light: rgba(196,163,90,0.15);
+      --forest-faint: rgba(45,74,62,0.08);
+      --forest-mid: rgba(45,74,62,0.22);
+    }
+
+    html, body {
+      background-color: var(--cream);
+      color: var(--forest);
+      font-family: 'Lato', sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    #app {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .screen {
+      flex: 1;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem 1.5rem;
+      animation: fadeUp 0.5s cubic-bezier(0.22,1,0.36,1) both;
+    }
+    .screen.active { display: flex; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    /* ── INNER CONTAINERS ──────────────────────────────────── */
+    .inner { max-width: 580px; width: 100%; }
+    .inner-wide { max-width: 680px; width: 100%; }
+
+    /* ── ORB ───────────────────────────────────────────────── */
+    .orb {
+      width: 60px; height: 60px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 40% 40%, var(--gold), var(--forest));
+      box-shadow: 0 8px 32px rgba(196,163,90,0.28);
+      margin: 0 auto 2rem;
+    }
+
+    /* ── EYEBROW ───────────────────────────────────────────── */
+    .eyebrow {
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      font-weight: 700;
+      margin-bottom: 0.9rem;
+    }
+
+    /* ── HEADINGS ──────────────────────────────────────────── */
+    h1 {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: clamp(2rem, 6vw, 3rem);
+      font-weight: 700;
+      line-height: 1.15;
+      color: var(--forest);
+      margin-bottom: 1.25rem;
+    }
+    h2 {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: clamp(1.2rem, 4vw, 1.55rem);
+      font-weight: 500;
+      line-height: 1.45;
+      color: var(--forest);
+      margin-bottom: 1.75rem;
+    }
+    h3 {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--forest);
+      margin-bottom: 1.1rem;
+    }
+
+    /* ── TAGLINE ───────────────────────────────────────────── */
+    .tagline {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 1.1rem;
+      font-style: italic;
+      color: var(--forest);
+      opacity: 0.72;
+      margin-bottom: 2.75rem;
+      line-height: 1.7;
+    }
+
+    /* ── DIVIDER ───────────────────────────────────────────── */
+    .divider {
+      width: 36px; height: 1px;
+      background: var(--gold);
+      margin: 0 auto;
+      opacity: 0.55;
+    }
+    .divider-left { margin: 0 0 1.75rem; }
+
+    /* ── META ──────────────────────────────────────────────── */
+    .meta {
+      font-size: 0.85rem;
+      color: var(--forest);
+      opacity: 0.5;
+      margin: 2rem 0 2.5rem;
+    }
+
+    /* ── BUTTONS ───────────────────────────────────────────── */
+    .btn {
+      display: inline-block;
+      border: none;
+      border-radius: 4px;
+      padding: 0.9rem 2.8rem;
+      font-size: 0.78rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      cursor: pointer;
+      font-family: 'Lato', sans-serif;
+      font-weight: 700;
+      transition: background 0.2s ease, box-shadow 0.2s ease, color 0.2s ease;
+      text-decoration: none;
+    }
+    .btn-primary {
+      background: var(--forest);
+      color: var(--cream);
+      box-shadow: 0 4px 18px rgba(45,74,62,0.22);
+    }
+    .btn-primary:hover {
+      background: var(--gold);
+      box-shadow: 0 6px 24px rgba(196,163,90,0.38);
+    }
+    .btn-outline {
+      background: transparent;
+      color: var(--forest);
+      border: 1.5px solid var(--forest-mid);
+    }
+    .btn-outline:hover { border-color: var(--gold); color: var(--gold); }
+    .btn-full { width: 100%; text-align: center; }
+
+    /* ── PROGRESS ──────────────────────────────────────────── */
+    .progress-wrap {
+      margin-bottom: 2.25rem;
+    }
+    .progress-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.6rem;
+    }
+    .progress-label {
+      font-size: 0.7rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--gold);
+      font-weight: 700;
+    }
+    .progress-track {
+      height: 2px;
+      background: rgba(45,74,62,0.12);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(to right, var(--gold), var(--forest));
+      border-radius: 2px;
+      transition: width 0.5s cubic-bezier(0.22,1,0.36,1);
+    }
+
+    /* ── OPTION BUTTONS ────────────────────────────────────── */
+    .options { display: flex; flex-direction: column; gap: 0.7rem; margin-bottom: 2.25rem; }
+    .option {
+      background: var(--card);
+      color: var(--forest);
+      border: 1.5px solid rgba(45,74,62,0.13);
+      border-radius: 8px;
+      padding: 0.95rem 1.2rem;
+      font-size: 0.92rem;
+      line-height: 1.55;
+      cursor: pointer;
+      font-family: 'Lato', sans-serif;
+      text-align: left;
+      transition: all 0.18s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .option:hover { border-color: var(--gold); transform: translateX(3px); }
+    .option.selected {
+      background: var(--forest);
+      color: var(--cream);
+      border-color: var(--forest);
+      box-shadow: 0 4px 14px rgba(45,74,62,0.2);
+    }
+    .radio {
+      width: 20px; height: 20px; min-width: 20px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(45,74,62,0.35);
+      transition: all 0.18s ease;
+      flex-shrink: 0;
+    }
+    .option.selected .radio {
+      background: var(--gold);
+      border-color: var(--gold);
+    }
+    .nav-row { display: flex; justify-content: flex-end; }
+
+    /* ── CARD ──────────────────────────────────────────────── */
+    .card {
+      background: var(--card);
+      border: 1px solid rgba(45,74,62,0.1);
+      border-radius: 14px;
+      padding: clamp(1.75rem, 5vw, 3rem);
+      box-shadow: 0 8px 40px rgba(45,74,62,0.07);
+    }
+
+    /* ── PROFILE TAG ───────────────────────────────────────── */
+    .tag {
+      display: inline-block;
+      background: var(--gold-light);
+      color: var(--gold);
+      padding: 0.28rem 0.85rem;
+      border-radius: 20px;
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+    }
+
+    /* ── PROFILE DESCRIPTION ───────────────────────────────── */
+    .profile-text {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-style: italic;
+      font-size: 0.975rem;
+      line-height: 1.95;
+      opacity: 0.82;
+    }
+
+    /* ── EMAIL FORM ────────────────────────────────────────── */
+    .email-box {
+      background: var(--card);
+      border: 1px solid rgba(196,163,90,0.25);
+      border-radius: 14px;
+      padding: clamp(1.75rem, 5vw, 3rem);
+      box-shadow: 0 8px 40px rgba(45,74,62,0.07);
+    }
+    .email-intro {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-style: italic;
+      font-size: 1rem;
+      line-height: 1.8;
+      opacity: 0.75;
+      margin-bottom: 1.75rem;
+    }
+    .field { margin-bottom: 1.1rem; }
+    .field label {
+      display: block;
+      font-size: 0.75rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-weight: 700;
+      margin-bottom: 0.45rem;
+      opacity: 0.65;
+    }
+    .field input {
+      width: 100%;
+      padding: 0.8rem 1rem;
+      border: 1.5px solid rgba(45,74,62,0.18);
+      border-radius: 6px;
+      font-family: 'Lato', sans-serif;
+      font-size: 0.95rem;
+      color: var(--forest);
+      background: white;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .field input:focus { border-color: var(--gold); }
+    .privacy {
+      font-size: 0.72rem;
+      opacity: 0.45;
+      text-align: center;
+      margin-top: 1rem;
+      line-height: 1.7;
+    }
+
+    /* ── OFFER CARDS ───────────────────────────────────────── */
+    .offers { display: flex; flex-direction: column; gap: 0.85rem; margin-bottom: 1.75rem; }
+    .offer-card {
+      display: block;
+      background: var(--card);
+      border: 1.5px solid rgba(45,74,62,0.12);
+      border-radius: 10px;
+      padding: 1.15rem 1.4rem;
+      text-decoration: none;
+      color: var(--forest);
+      transition: border-color 0.2s, box-shadow 0.2s;
+      animation: fadeIn 0.4s ease both;
+    }
+    .offer-card:hover { border-color: var(--gold); box-shadow: 0 4px 20px rgba(196,163,90,0.18); }
+    .offer-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 0.35rem;
+    }
+    .offer-name {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 1rem;
+      font-weight: 600;
+    }
+    .offer-price { color: var(--gold); font-weight: 700; font-size: 0.92rem; white-space: nowrap; }
+    .offer-desc { font-size: 0.85rem; opacity: 0.67; line-height: 1.6; }
+
+    /* ── DIGITAL STRIP ─────────────────────────────────────── */
+    .digital-strip {
+      background: linear-gradient(135deg, rgba(45,74,62,0.05), rgba(196,163,90,0.09));
+      border: 1px solid rgba(196,163,90,0.22);
+      border-radius: 12px;
+      padding: 1.6rem;
+      margin-bottom: 2.25rem;
+    }
+    .digital-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 0.65rem;
+      margin-top: 1rem;
+    }
+    .digital-card {
+      display: block;
+      background: var(--card);
+      border: 1px solid rgba(196,163,90,0.2);
+      border-radius: 8px;
+      padding: 0.9rem 1rem;
+      text-decoration: none;
+      color: var(--forest);
+      transition: all 0.2s ease;
+    }
+    .digital-card:hover { background: var(--forest); color: var(--cream); }
+    .digital-name { font-weight: 700; font-size: 0.82rem; margin-bottom: 0.2rem; }
+    .digital-price { color: var(--gold); font-weight: 700; font-size: 0.88rem; }
+    .digital-card:hover .digital-price { color: var(--cream); opacity: 0.8; }
+
+    /* ── EMPTY STATE ───────────────────────────────────────── */
+    .empty-offers {
+      text-align: center;
+      padding: 2rem;
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      opacity: 0.6;
+      font-size: 0.95rem;
+    }
+
+    /* ── FOOTER ────────────────────────────────────────────── */
+    footer {
+      text-align: center;
+      padding: 1.5rem;
+      font-size: 0.72rem;
+      color: var(--forest);
+      opacity: 0.4;
+      letter-spacing: 0.12em;
+    }
+  </style>
+</head>
+<body>
+<div id="app">
+
+  <!-- WELCOME -->
+  <section id="screen-welcome" class="screen active">
+    <div class="inner" style="text-align:center;">
+      <div class="orb"></div>
+      <p class="eyebrow">Astrologie &amp; Compagnie</p>
+      <h1>La Boussole Astrologique</h1>
+      <p class="tagline">Découvrez quelle est la prochaine étape<br>sur votre chemin</p>
+      <div class="divider" style="margin-bottom:2.25rem;"></div>
+      <p class="meta">6 questions &nbsp;•&nbsp; 3 minutes</p>
+      <button class="btn btn-primary" onclick="startQuiz()">Commencer</button>
+    </div>
+  </section>
+
+  <!-- QUIZ -->
+  <section id="screen-quiz" class="screen">
+    <div class="inner">
+      <div class="progress-wrap">
+        <div class="progress-header">
+          <span class="progress-label" id="q-label">Question 1 / 6</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+        </div>
+      </div>
+      <h2 id="q-text"></h2>
+      <div class="options" id="q-options"></div>
+      <div class="nav-row">
+        <button class="btn btn-primary" id="btn-next" onclick="nextQuestion()" disabled>
+          Suivant&nbsp;→
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROFILE REVEAL (before email) -->
+  <section id="screen-profile" class="screen">
+    <div class="inner-wide">
+      <div class="card" style="margin-bottom:2rem;">
+        <p class="eyebrow">Votre profil de blocage</p>
+        <h1 id="profile-name" style="font-size:clamp(1.6rem,5vw,2.1rem);margin-bottom:.5rem;"></h1>
+        <span class="tag" id="profile-label"></span>
+        <div class="divider divider-left"></div>
+        <p class="profile-text" id="profile-text"></p>
+      </div>
+      <div style="text-align:center;">
+        <button class="btn btn-primary" onclick="showEmailCapture()">
+          Découvrir mes recommandations&nbsp;→
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- EMAIL CAPTURE -->
+  <section id="screen-email" class="screen">
+    <div class="inner">
+      <p class="eyebrow" style="text-align:center;">Une dernière étape</p>
+      <h2 style="text-align:center;margin-bottom:1rem;">Recevez vos recommandations personnalisées</h2>
+      <div class="email-box">
+        <p class="email-intro">
+          Votre profil est prêt. Entrez votre prénom et votre adresse e-mail pour découvrir les accompagnements les plus alignés avec votre chemin — et les recevoir aussi dans votre boîte mail.
+        </p>
+        <div class="field">
+          <label for="input-name">Prénom</label>
+          <input type="text" id="input-name" placeholder="Votre prénom" autocomplete="given-name" />
+        </div>
+        <div class="field">
+          <label for="input-email">Adresse e-mail</label>
+          <input type="email" id="input-email" placeholder="votre@email.com" autocomplete="email" />
+        </div>
+        <button class="btn btn-primary btn-full" style="margin-top:1.25rem;" onclick="submitEmail()">
+          Voir mes recommandations
+        </button>
+        <p class="privacy">Vos données restent confidentielles.<br>Vous pouvez vous désinscrire à tout moment.</p>
+      </div>
+      <div style="text-align:center;margin-top:1.25rem;">
+        <button class="btn btn-outline" onclick="skipEmail()">Continuer sans laisser mon e-mail</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- RESULTS -->
+  <section id="screen-results" class="screen">
+    <div class="inner-wide">
+
+      <div class="card" style="margin-bottom:2rem;">
+        <p class="eyebrow">Votre profil de blocage</p>
+        <h1 id="result-profile-name" style="font-size:clamp(1.5rem,5vw,2rem);margin-bottom:.4rem;"></h1>
+        <span class="tag" id="result-profile-label"></span>
+      </div>
+
+      <div style="margin-bottom:2rem;">
+        <h3 id="results-offers-title">Ce qui vous correspondrait le mieux</h3>
+        <div class="offers" id="offers-list"></div>
+        <div id="offers-empty" class="empty-offers" style="display:none;">
+          Explorez nos ressources numériques ci-dessous pour commencer votre parcours.
+        </div>
+      </div>
+
+      <div class="digital-strip">
+        <h3 style="margin-bottom:0;">Pour commencer dès aujourd'hui</h3>
+        <div class="digital-grid" id="digital-list"></div>
+      </div>
+
+      <div style="text-align:center;margin-top:0.5rem;">
+        <button class="btn btn-outline" onclick="restart()">Recommencer</button>
+      </div>
+    </div>
+  </section>
+
+  <footer>Astrologie &amp; Compagnie</footer>
+</div>
+
+<script>
+// ─────────────────────────────────────────────
+//  DATA
+// ─────────────────────────────────────────────
+const QUESTIONS = [
+  {
+    text: "Ce qui vous pèse le plus en ce moment, c'est...",
+    options: [
+      "Je ne sais plus vraiment qui je suis ni ce que je veux",
+      "Je sens que je passe à côté de ma mission de vie",
+      "Mon énergie est épuisée, je me sens déconnectée de moi-même",
+      "Mon activité professionnelle ne reflète pas qui je suis vraiment",
+      "Mes relations et ma façon d'interagir avec le monde me questionnent",
+    ],
+    profiles: ["ame","mission","guerriere","entrepreneure","tisseuse"],
+  },
+  {
+    text: "Quand vous pensez à votre avenir, vous ressentez...",
+    options: [
+      "De la confusion — les possibilités sont trop nombreuses",
+      "De l'impatience — je sais où je veux aller mais je suis bloquée",
+      "De la fatigue — j'ai besoin de me ressourcer avant d'avancer",
+      "De la frustration — j'ai des idées mais je ne sais pas comment les structurer",
+      "De l'anxiété — j'ai peur de faire les mauvais choix",
+    ],
+    profiles: ["ame","mission","guerriere","entrepreneure","tisseuse"],
+  },
+  {
+    text: "Ce dont vous avez besoin maintenant, c'est...",
+    options: [
+      "Comprendre mon schéma de vie pour enfin me libérer",
+      "Une guidance claire sur ma direction et mes dons",
+      "Retrouver mon équilibre énergétique et ma vitalité",
+      "Un cadre concret pour aligner mon business avec qui je suis",
+      "Mieux comprendre mes dynamiques relationnelles",
+    ],
+    profiles: ["ame","mission","guerriere","entrepreneure","tisseuse"],
+  },
+  {
+    text: "Comment vous préférez avancer ?",
+    options: [
+      "Seule, à mon rythme, avec les bons outils",
+      "Avec un accompagnement ponctuel quand j'en ai besoin",
+      "Dans une relation de suivi régulier sur la durée",
+      "Avec un mentorat intensif pour aller vite et loin",
+    ],
+    profiles: null,
+  },
+  {
+    text: "Votre horizon de transformation idéal ?",
+    options: [
+      "Je veux des résultats rapides, en une session",
+      "Je veux un suivi sur quelques semaines",
+      "Je veux un accompagnement sur plusieurs mois",
+      "Je veux juste explorer par moi-même d'abord",
+    ],
+    profiles: null,
+  },
+  {
+    text: "Face à cette transformation, vous vous sentez...",
+    options: [
+      "Curieuse — j'ai envie de comprendre avant de m'engager pleinement",
+      "Prête à faire un premier pas concret dès maintenant",
+      "Vraiment engagée et déterminée à aller en profondeur",
+      "Pleinement déterminée — c'est le moment d'aller jusqu'au bout",
+    ],
+    profiles: null,
+  },
+];
+
+// Commitment index → budget filter (maps to offer max prices)
+const COMMITMENT_TO_BUDGET = [150, 400, 800, Infinity];
+
+const OFFERS = [
+  { name:"AstroFlash",                                     price:75,   label:"75€",       desc:"Une lecture asynchrone ciblée sur une question, avec vidéo et récapitulatif PDF.",                                 anchor:"#astroflash"        },
+  { name:"Cartographie Cosmique",                          price:222,  label:"222€",       desc:"Une lecture approfondie de votre thème natal pour révéler vos patterns et dons profonds.",                         anchor:"#cartographie"      },
+  { name:"Séance de Rééquilibration Astro-Énergétique",   price:555,  label:"555€",       desc:"Deux sessions pour retrouver votre équilibre énergétique et vous reconnecter à vous-même.",                       anchor:"#reequilibration"   },
+  { name:"Consultation Mission d'Âme",                    price:111,  label:"111€",       desc:"Une session dédiée à clarifier votre mission de vie et vos dons uniques.",                                        anchor:"#mission-ame"       },
+  { name:"Cozy Cosmic Coaching mensuel",                   price:222,  label:"222€/mois",  desc:"Un accompagnement mensuel régulier pour avancer à votre rythme dans votre transformation.",                       anchor:"#cozy-coaching"     },
+  { name:"Parcours Astro-Énergétique 3 séances",          price:388,  label:"388€",       desc:"Un parcours en trois étapes pour ancrer durablement votre transformation énergétique.",                           anchor:"#parcours-3"        },
+  { name:"Parcours Astro-Énergétique 6 séances",          price:777,  label:"777€",       desc:"Un accompagnement profond sur six séances pour transformer en profondeur vos dynamiques.",                        anchor:"#parcours-6"        },
+  { name:"Mentorat Business Intensif 3 mois",             price:1555, label:"1 555€",     desc:"Un mentorat intensif sur trois mois pour aligner votre activité avec votre essence profonde.",                    anchor:"#mentorat-business" },
+];
+
+const DIGITAL = [
+  { name:"Rituel Lunaire",       price:"7€",  anchor:"#rituel-lunaire" },
+  { name:"Au Clair de la Lune", price:"27€", anchor:"#au-clair-lune"  },
+  { name:"App Vides de Course", price:"27€", anchor:"#vides-course"   },
+  { name:"Guide Astral 2026",   price:"47€", anchor:"#guide-astral"   },
+];
+
+const PROFILES = {
+  ame: {
+    name: "L'Âme en Quête",
+    label: "Blocage d'identité",
+    desc: "Vous traversez une période de profonde remise en question, où les anciennes certitudes s'effacent pour laisser place à une nouvelle version de vous-même. Votre chemin passe par une reconnexion à votre essence la plus authentique — celle qui existait avant les attentes du monde. Vous avez besoin d'un espace pour vous retrouver, vous nommer, et reprendre confiance en votre propre boussole intérieure.",
+    offers: ["Cartographie Cosmique","Consultation Mission d'Âme","AstroFlash"],
+  },
+  mission: {
+    name: "La Porteuse de Mission",
+    label: "Blocage de mission de vie",
+    desc: "Vous sentez en vous un appel profond — quelque chose de plus grand que votre quotidien actuel vous attend. Cette intuition est réelle, et votre impatience est un signe de votre alignement en devenir. Ce dont vous avez besoin, c'est d'une guidance claire qui vous permette de nommer vos dons, d'embrasser votre direction et de poser les premiers pas concrets sur votre chemin de mission.",
+    offers: ["Consultation Mission d'Âme","Parcours Astro-Énergétique 3 séances","Cartographie Cosmique"],
+  },
+  guerriere: {
+    name: "La Guerrière Épuisée",
+    label: "Blocage énergétique",
+    desc: "Vous avez longtemps donné, porté, avancé — et votre corps, votre âme et votre énergie vous demandent maintenant une pause bienveillante. L'épuisement que vous ressentez n'est pas une faiblesse : c'est le signal que vous avez besoin de vous retourner vers vous-même avant de continuer. Votre transformation commence par la restauration de votre vitalité et de votre équilibre intérieur.",
+    offers: ["Séance de Rééquilibration Astro-Énergétique","Parcours Astro-Énergétique 3 séances","AstroFlash"],
+  },
+  entrepreneure: {
+    name: "L'Entrepreneure en Éveil",
+    label: "Blocage professionnel",
+    desc: "Vous portez une vision claire de ce que vous voulez créer, mais il vous manque le cadre pour faire de votre activité le reflet parfait de qui vous êtes. L'astrologie peut devenir votre boussole entrepreneuriale — un outil puissant pour aligner vos décisions, votre positionnement et votre énergie avec votre thème natal unique. Vous êtes prête à construire quelque chose de vrai.",
+    offers: ["Mentorat Business Intensif 3 mois","Cozy Cosmic Coaching mensuel","Cartographie Cosmique"],
+  },
+  tisseuse: {
+    name: "La Tisseuse de Liens",
+    label: "Blocage relationnel",
+    desc: "Vos relations — amoureuses, familiales, professionnelles — sont au cœur de votre questionnement. Vous sentez que certains schémas se répètent et vous souhaitez comprendre pourquoi vous attirez certaines dynamiques dans votre vie. L'astrologie peut vous offrir un éclairage précieux sur vos modes relationnels, vous aidant à tisser des liens plus justes, plus nourrissants et plus alignés avec qui vous devenez.",
+    offers: ["Parcours Astro-Énergétique 6 séances","Cozy Cosmic Coaching mensuel","Consultation Mission d'Âme"],
+  },
+};
+
+// ─────────────────────────────────────────────
+//  STATE
+// ─────────────────────────────────────────────
+let currentQ    = 0;
+let answers     = [];   // [{questionIndex, answerIndex}]
+let selectedOpt = null;
+
+// ─────────────────────────────────────────────
+//  SCREEN HELPERS
+// ─────────────────────────────────────────────
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => {
+    s.classList.remove('active');
+    s.style.animation = 'none';
+  });
+  const el = document.getElementById(id);
+  el.classList.add('active');
+  // Restart animation
+  requestAnimationFrame(() => {
+    el.style.animation = '';
+  });
+  window.scrollTo(0, 0);
+}
+
+// ─────────────────────────────────────────────
+//  QUIZ LOGIC
+// ─────────────────────────────────────────────
+function startQuiz() {
+  currentQ    = 0;
+  answers     = [];
+  selectedOpt = null;
+  renderQuestion();
+  showScreen('screen-quiz');
+}
+
+function renderQuestion() {
+  const q = QUESTIONS[currentQ];
+  const total = QUESTIONS.length;
+
+  document.getElementById('q-label').textContent =
+    `Question ${currentQ + 1} / ${total}`;
+  document.getElementById('progress-fill').style.width =
+    `${(currentQ / total) * 100}%`;
+
+  document.getElementById('q-text').textContent = q.text;
+
+  const optEl = document.getElementById('q-options');
+  optEl.innerHTML = '';
+  q.options.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'option';
+    btn.innerHTML = `<span class="radio"></span>${opt}`;
+    btn.onclick = () => selectOption(i);
+    optEl.appendChild(btn);
+  });
+
+  selectedOpt = null;
+  const btnNext = document.getElementById('btn-next');
+  btnNext.disabled = true;
+  btnNext.textContent = currentQ === QUESTIONS.length - 1 ? 'Voir mon profil' : 'Suivant →';
+}
+
+function selectOption(index) {
+  selectedOpt = index;
+  document.querySelectorAll('#q-options .option').forEach((btn, i) => {
+    btn.classList.toggle('selected', i === index);
+  });
+  document.getElementById('btn-next').disabled = false;
+}
+
+function nextQuestion() {
+  if (selectedOpt === null) return;
+  answers.push({ questionIndex: currentQ, answerIndex: selectedOpt });
+
+  if (currentQ === QUESTIONS.length - 1) {
+    showProfileReveal();
+  } else {
+    currentQ++;
+    // Animate transition
+    const quiz = document.getElementById('screen-quiz');
+    quiz.style.animation = 'none';
+    requestAnimationFrame(() => {
+      quiz.style.animation = 'fadeUp 0.4s cubic-bezier(0.22,1,0.36,1) both';
+      renderQuestion();
+    });
+  }
+}
+
+// ─────────────────────────────────────────────
+//  PROFILE DETERMINATION
+// ─────────────────────────────────────────────
+function determineProfile() {
+  const scores = { ame:0, mission:0, guerriere:0, entrepreneure:0, tisseuse:0 };
+  const weights = [3, 2, 1];
+
+  for (let i = 0; i < 3; i++) {
+    const ans = answers.find(a => a.questionIndex === i);
+    if (ans && QUESTIONS[i].profiles) {
+      const p = QUESTIONS[i].profiles[ans.answerIndex];
+      if (p) scores[p] += weights[i];
+    }
+  }
+
+  return Object.entries(scores).sort((a,b) => b[1]-a[1])[0][0];
+}
+
+function getBudgetMax() {
+  const ans = answers.find(a => a.questionIndex === 5);
+  const idx = ans ? ans.answerIndex : 3;
+  return COMMITMENT_TO_BUDGET[idx];
+}
+
+// ─────────────────────────────────────────────
+//  PROFILE REVEAL (before email)
+// ─────────────────────────────────────────────
+function showProfileReveal() {
+  const key = determineProfile();
+  const p = PROFILES[key];
+
+  document.getElementById('profile-name').textContent  = p.name;
+  document.getElementById('profile-label').textContent = p.label;
+  document.getElementById('profile-text').textContent  = p.desc;
+
+  showScreen('screen-profile');
+}
+
+// ─────────────────────────────────────────────
+//  EMAIL CAPTURE
+// ─────────────────────────────────────────────
+function showEmailCapture() {
+  showScreen('screen-email');
+}
+
+function submitEmail() {
+  const name  = document.getElementById('input-name').value.trim();
+  const email = document.getElementById('input-email').value.trim();
+
+  if (!email || !isValidEmail(email)) {
+    document.getElementById('input-email').focus();
+    document.getElementById('input-email').style.borderColor = '#c0392b';
+    return;
+  }
+
+  // ── Hook: post lead data to your CRM / email platform ──────────────────
+  // Uncomment and adapt to your system:
+  //
+  // fetch('https://your-api.com/leads', {
+  //   method: 'POST',
+  //   headers: { 'Content-Type': 'application/json' },
+  //   body: JSON.stringify({
+  //     name, email,
+  //     profile: determineProfile(),
+  //     answers: answers
+  //   })
+  // });
+  // ───────────────────────────────────────────────────────────────────────
+
+  showResults();
+}
+
+function skipEmail() {
+  showResults();
+}
+
+function isValidEmail(e) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
+}
+
+// ─────────────────────────────────────────────
+//  RESULTS
+// ─────────────────────────────────────────────
+function showResults() {
+  const key     = determineProfile();
+  const p       = PROFILES[key];
+  const budget  = getBudgetMax();
+
+  // Header
+  document.getElementById('result-profile-name').textContent  = p.name;
+  document.getElementById('result-profile-label').textContent = p.label;
+
+  // Offers
+  const filtered = p.offers
+    .map(name => OFFERS.find(o => o.name === name))
+    .filter(o => o && o.price <= budget);
+
+  const offersList  = document.getElementById('offers-list');
+  const offersEmpty = document.getElementById('offers-empty');
+  const offersTitle = document.getElementById('results-offers-title');
+  offersList.innerHTML = '';
+
+  if (filtered.length === 0) {
+    offersEmpty.style.display = 'block';
+    offersTitle.style.display = 'none';
+  } else {
+    offersEmpty.style.display = 'none';
+    offersTitle.style.display = '';
+    filtered.forEach((o, i) => {
+      const a = document.createElement('a');
+      a.className = 'offer-card';
+      a.href = o.anchor;
+      a.style.animationDelay = `${i * 0.1}s`;
+      a.innerHTML = `
+        <div class="offer-head">
+          <span class="offer-name">${o.name}</span>
+          <span class="offer-price">${o.label}</span>
+        </div>
+        <p class="offer-desc">${o.desc}</p>`;
+      offersList.appendChild(a);
+    });
+  }
+
+  // Digital products
+  const digitalList = document.getElementById('digital-list');
+  digitalList.innerHTML = '';
+  DIGITAL.forEach(d => {
+    const a = document.createElement('a');
+    a.className = 'digital-card';
+    a.href = d.anchor;
+    a.innerHTML = `<div class="digital-name">${d.name}</div><div class="digital-price">${d.price}</div>`;
+    digitalList.appendChild(a);
+  });
+
+  showScreen('screen-results');
+}
+
+// ─────────────────────────────────────────────
+//  RESTART
+// ─────────────────────────────────────────────
+function restart() {
+  document.getElementById('input-name').value  = '';
+  document.getElementById('input-email').value = '';
+  document.getElementById('input-email').style.borderColor = '';
+  showScreen('screen-welcome');
+}
+</script>
+</body>
+</html>
